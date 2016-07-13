@@ -1,4 +1,4 @@
-package com.example.marzian.listmanager;
+package com.example.chris.foodmanager;
 
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -63,7 +63,18 @@ public class MyDBHandler extends SQLiteOpenHelper {
         //Cursor point to a location in your results
         Cursor c = db.rawQuery(query, null);
 
+        c.moveToFirst();
 
+        while(!c.isAfterLast()){
+            if (c.getString(c.getColumnIndex("productname"))!=null){
+                dbString    += c.getString(c.getColumnIndex("productname"));
+                dbString += "\n";
+            }
+        }
+
+        db.close();
+
+        return dbString;
     }
 
 
