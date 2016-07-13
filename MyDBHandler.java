@@ -1,5 +1,8 @@
-package com.example.chris.foodmanager;
+package com.example.chris.newmanager;
 
+/**
+ * Created by Chris on 13.07.16.
+ */
 import android.database.sqlite.SQLiteOpenHelper;
 
 import android .database.sqlite.SQLiteDatabase;
@@ -11,75 +14,69 @@ import android.content.ContentValues;
 
 
 public class MyDBHandler extends SQLiteOpenHelper {
+
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "product.db";
-    private static final String TABLE_PRODUCTS = "products";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_PRODUCTNAME = "productname";
+    private static final String DATABASE_NAME = "products.db";
+    public static final String TABLE_NAME = "products";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_PRODUCTNAME = "_productname";
 
-
-
-    public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
+    //Constructor.
+    public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        String query = "Create Table " + TABLE_PRODUCTS + "(" +
-                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " +
-                COLUMN_PRODUCTNAME + " TEXT " +
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        String query = "CREATE TABLE " + TABLE_NAME +"(" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_PRODUCTNAME + " TEXT" +
                 ");";
-        db.execSQL(query);
-
+        sqLiteDatabase.execSQL(query);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
-        onCreate(db);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        String query = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        sqLiteDatabase.execSQL(query);
+        onCreate(sqLiteDatabase);
     }
 
-
-    public void addProduct(Products product){
+    //Add a new row to the database.
+    public void addProduct(Products product) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PRODUCTNAME, product.get_productname() );
-        SQLiteDatabase db = getWritableDatabase();
-        db.insert(TABLE_PRODUCTS, null, values);
-        db.close();
+        values.put(COLUMN_PRODUCTNAME, product.get_productname()); //Where, what. (Not writing to database yet.)
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        sqLiteDatabase.insert(TABLE_NAME, null, values); //Writing to database now.
+        sqLiteDatabase.close();
     }
 
-
-    public void deleteProduct(String productName){
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME + "=\"" + productName + "\";");
+    //Delete a product from the database.
+    public void deleteProduct(String productName) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_PRODUCTNAME + "=\"" + productName + "\"";
+        sqLiteDatabase.execSQL(query);
     }
 
-
-    public String databaseToString(){
+    //Print out the database as a string.
+    public String databaseToString() {
         String dbString = "";
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT  * FROM " + TABLE_PRODUCTS + " WHERE 1";
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE 1"; //Select every column, select every row.
 
-        //Cursor point to a location in your results
-        Cursor c = db.rawQuery(query, null);
-
-        c.moveToFirst();
-
-        while(!c.isAfterLast()){
-            if (c.getString(c.getColumnIndex("productname"))!=null){
-                dbString    += c.getString(c.getColumnIndex("productname"));
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null); //Cursor point to a location in results.
+        cursor.moveToFirst(); //Move to the first row in results.
+        while (!cursor.isAfterLast()) {
+            if (cursor.getString(cursor.getColumnIndex("_productname")) != null) {
+                dbString += cursor.getString(cursor.getColumnIndex("_productname"));
                 dbString += "\n";
             }
+            cursor.moveToNext();
         }
+        cursor.close();
 
-        db.close();
-
+        sqLiteDatabase.close();
         return dbString;
     }
-
-
-
-
-
 
 }
