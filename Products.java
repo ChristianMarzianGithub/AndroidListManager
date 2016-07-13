@@ -1,4 +1,4 @@
-package com.example.chris.foodmanager;
+package com.example.chris.newmanager;
 
 /**
  * Created by Chris on 13.07.16.
