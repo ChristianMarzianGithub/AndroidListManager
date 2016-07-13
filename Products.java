@@ -1,7 +1,7 @@
-package com.example.marzian.listmanager;
+package com.example.chris.foodmanager;
 
 /**
- * Created by marzian on 13.07.2016.
+ * Created by Chris on 13.07.16.
  */
 public class Products {
     private int _id;
