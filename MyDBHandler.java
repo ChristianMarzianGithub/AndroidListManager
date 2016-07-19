@@ -90,7 +90,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public int getAmountOfValues(){
         int count = 0;
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_NAME + " WHERE 1"; //Select every column, select every row.
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE 1 "; //Select every column, select every row.
 
         Cursor cursor = sqLiteDatabase.rawQuery(query, null); //Cursor point to a location in results.
         cursor.moveToFirst(); //Move to the first row in results.
@@ -111,13 +111,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void deleteAll(){
 
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-
-
-
         sqLiteDatabase.execSQL("DELETE FROM " + TABLE_NAME);
-
-
-
     }
 
 }

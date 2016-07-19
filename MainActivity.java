@@ -1,7 +1,8 @@
 package com.example.chris.newmanager;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,7 +12,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,23 +29,15 @@ public class MainActivity extends AppCompatActivity {
     TextView AnzahlText;
     TableRow x;
     ListView listView;
+    TextView text1;
+    TextView text2;
 
 
-    String[] values = new String[] { "Android List View",
-            "Adapter implementation",
-            "Simple List View In Android",
-            "Create List View Android",
-            "Android Example",
-            "List View Source Code",
-            "List View Array Adapter",
-            "Android Example List View"
-    };
+
 
     ArrayList<String> myArrayList=
             new ArrayList<String>();
 
-
-    String y;
 
 
     @Override
@@ -46,21 +46,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         buckysInput = (EditText) findViewById(R.id.buckysInput);
-        //buckysText = (TextView) findViewById(R.id.buckysText);
         dbHandler = new MyDBHandler(this, null, null, 1);
-        //AnzahlText = (TextView) findViewById(R.id.textViewAnzahl);
-
         listView = (ListView) findViewById(R.id.listView);
+        text1 = (TextView) findViewById(R.id.textView);
+        text2 = (TextView) findViewById(R.id.textView2);
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, myArrayList);
-
-
         listView.setAdapter(adapter);
-
-
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -99,6 +93,28 @@ public class MainActivity extends AppCompatActivity {
 
         printDatabase();
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            String scanContent = scanningResult.getContents();
+
+
+
+
+            String scanFormat = scanningResult.getFormatName();
+
+            Products product = new Products(scanContent);
+            dbHandler.addProduct(product);
+            printDatabase();
+            listView.invalidateViews();
+            buckysInput.setText("");
+        }
+        else{
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "No scan data received!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
 
 
 
@@ -126,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void printDatabase(){
         myArrayList = dbHandler.databaseToString(myArrayList);
+
         listView.invalidateViews();
     }
 
@@ -133,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
     public void anzahlButtonClicked(View views){
         int anzahl = dbHandler.getAmountOfValues();
         AnzahlText.setText(Integer.toString(anzahl));
+    }
+
+    public void scanIt(View v){
+        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+        scanIntegrator.initiateScan();
+
     }
 
 }
